@@ -1,0 +1,20 @@
+type Request {
+    Name string `path:"name,options=you|me"`
+}
+
+type Response {
+    Message string `json:"message"`
+}
+
+@server(
+    group : demo1
+)
+service demo1-api {
+    @handler DemoHandler
+    get /from/:name (Request) returns (Response)
+}
+
+service demo1-api {
+    @handler From2Handler
+    get /from2
+}

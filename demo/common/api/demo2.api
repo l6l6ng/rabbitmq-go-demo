@@ -1,0 +1,13 @@
+type Request2 {
+    Name string `path:"name,options=you|me"`
+}
+
+type Response2 {
+    Message string `json:"message"`
+}
+
+service demo2-api {
+    @handler DemoHandler2
+    get /from2/:name(Request2) returns (Response2)
+}
+

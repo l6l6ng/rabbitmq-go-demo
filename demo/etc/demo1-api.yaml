@@ -1,0 +1,5 @@
+Name: demo1-api
+Host: 0.0.0.0
+Port: 8888
+RabbitMq:
+  DataSource: amqp://admin:123456@localhost:5672/
