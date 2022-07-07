@@ -6,10 +6,8 @@ import (
 )
 
 type MqConfig struct {
+	Ch *amqp.Channel
 }
-
-var Conn *amqp.Connection
-var Chan *amqp.Channel
 
 func newMq(dataSource string) (*amqp.Connection, error) {
 	conn, err := amqp.Dial(dataSource)
@@ -19,18 +17,20 @@ func newMq(dataSource string) (*amqp.Connection, error) {
 	return conn, nil
 }
 
-func Connect(dataSource string) *amqp.Channel {
+func Connect(dataSource string) *MqConfig {
 	Conn, _ := newMq(dataSource)
-	Chan, err := Conn.Channel()
+	ch, err := Conn.Channel()
 
 	failOnError(err, "Failed to open a channel")
 
-	return Chan
+	return &MqConfig{
+		Ch: ch,
+	}
 
 }
 
-func Publish(chan1 *amqp.Channel, name string, body string) bool {
-	q, err := chan1.QueueDeclare(
+func (mq *MqConfig) Publish(name string, body string) bool {
+	q, err := mq.Ch.QueueDeclare(
 		name,
 		false,
 		false,
@@ -39,7 +39,7 @@ func Publish(chan1 *amqp.Channel, name string, body string) bool {
 		nil,
 	)
 	failOnError(err, "Failed to declare a queue")
-	err = chan1.Publish(
+	err = mq.Ch.Publish(
 		"",
 		q.Name,
 		false,
@@ -52,8 +52,8 @@ func Publish(chan1 *amqp.Channel, name string, body string) bool {
 	return true
 }
 
-func Consume(chan1 *amqp.Channel, name string) {
-	q, err := chan1.QueueDeclare(
+func (mq *MqConfig) Consume( name string) {
+	q, err := mq.Ch.QueueDeclare(
 		name,
 		false,
 		false,
@@ -63,7 +63,7 @@ func Consume(chan1 *amqp.Channel, name string) {
 	)
 	failOnError(err, "Failed to declare a queue")
 
-	msgs, err := chan1.Consume(
+	msgs, err := mq.Ch.Consume(
 		q.Name,
 		"",
 		true,
@@ -71,7 +71,7 @@ func Consume(chan1 *amqp.Channel, name string) {
 		false,
 		false,
 		nil,
-		)
+	)
 	var forever chan struct{}
 
 	go func() {
