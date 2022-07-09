@@ -27,10 +27,18 @@ func NewDemoLogic(ctx context.Context, svcCtx *svc.ServiceContext) *DemoLogic {
 
 func (l *DemoLogic) Demo(req *types.Request) (resp *types.Response, err error) {
 	// todo: add your logic here and delete this line
-	rand.Seed(time.Now().Unix())
-	r := 9999 - rand.Intn(8999)
-	msg := "hello word!" + strconv.Itoa(r)
-	l.svcCtx.Mq.Publish("test-queue1", msg)
+	i := 0;
+	msg := ""
+	for i < 10 {
+
+		rand.Seed(time.Now().UnixMicro())
+		r := 9999 - rand.Intn(8999)
+		msg = "hello word.!" + strconv.Itoa(r)
+		l.svcCtx.Mq.PublishWork("test-queue2-1", msg)
+
+		i++
+	}
+
 
 	return &types.Response{
 		Message: msg,
