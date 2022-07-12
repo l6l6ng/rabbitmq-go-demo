@@ -25,7 +25,7 @@ func main_p() {
 	fmt.Println(i)
 }
 
-func main() {
+func main_r() {
 	var dataSource = "amqp://admin:123456@localhost:5672/"
 	mqcf := mq.Connect(dataSource)
 	routing_key := os.Args[1]
@@ -36,6 +36,22 @@ func main() {
 		r := 9999 - rand.Intn(8999)
 		msg = "hello word!" + routing_key + strconv.Itoa(r)
 		mqcf.PublishRouting(routing_key, msg)
+		i++
+	}
+	fmt.Println(i)
+}
+
+func main() {
+	var dataSource = "amqp://admin:123456@localhost:5672/"
+	mqcf := mq.Connect(dataSource)
+	routing_key := os.Args[1]
+	i := 0
+	msg := ""
+	for i < 10 {
+		rand.Seed(time.Now().UnixMicro())
+		r := 9999 - rand.Intn(8999)
+		msg = "hello word!" + routing_key + strconv.Itoa(r)
+		mqcf.PublishTopic(routing_key, msg)
 		i++
 	}
 	fmt.Println(i)

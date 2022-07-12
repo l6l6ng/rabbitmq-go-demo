@@ -14,5 +14,6 @@ func main() {
 
 	//routing 模式
 	routing_key := os.Args[1]
-	mqcf.ConsumeRouting(routing_key)
+	//mqcf.ConsumeRouting(routing_key)
+	mqcf.ConsumeTopic(routing_key)
 }
