@@ -41,6 +41,7 @@ func (mq *MqConfig) ConsumeTopic(routing_key string) {
 		false,
 		nil,
 	)
+
 	failOnError(err, "Failed to declare a exchange")
 
 	q, err := mq.Ch.QueueDeclare(
